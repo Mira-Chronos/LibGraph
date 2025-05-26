@@ -56,6 +56,13 @@ Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEI
         }
     }
 
+    std::vector<Neighbor> getNeighbors(const T& node) const {
+        if (adjacencyList.count(node)) {
+            return adjacencyList.at(node);
+        }
+        return {};
+    }
+
 private:
     std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
     WeightMode weightMode;
@@ -84,6 +91,12 @@ int main()
     undirectedGraph.addEdge("C", "D", 1.0);
     std::cout << "Undirected Graph:\n";
     undirectedGraph.printGraph();
+    std::cout << "Neighbors : " << " E" << std::endl;
+    auto tmp = undirectedGraph.getNeighbors("E");
+    for (const auto& n : tmp) {
+        std::cout << "\t"<< n.first << std::endl;
+    }
+
 
     return 0;
 }
