@@ -4,6 +4,7 @@ LibGraph
 ## Purpose:
 
 Creation of a library to manage mathematical graphs using adjacency lists for educational purposes.
+
 Discovery of iterators in modern C++
 
 ## Dependencies
