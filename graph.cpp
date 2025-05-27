@@ -36,6 +36,18 @@ Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEI
         return adjacencyList.empty();
     }
 
+    size_t numEdges() const {
+        size_t edgeCount = 0;
+        for (const auto& pair : adjacencyList) {
+            //std::cout << pair.first << " -> " << pair.second.size() << std::endl;
+            edgeCount += pair.second.size();
+        }
+        if (graphType == GraphType::UNDIRECTED) {
+            edgeCount /= 2;
+        }
+        return edgeCount;
+    }
+
     void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt) {
         addNode(from);
         addNode(to);
@@ -86,6 +98,8 @@ int main()
     directedGraph.addEdge(3, 1);
     std::cout << "Directed Graph:\n";
     directedGraph.printGraph();
+    std::cout << directedGraph.numNodes() << std::endl;
+    std::cout << directedGraph.numEdges() << std::endl;
 
     std::cout << "\n";
 
@@ -104,7 +118,8 @@ int main()
     for (const auto& n : tmp) {
         std::cout << "\t"<< n.first << std::endl;
     }
-
+    std::cout << undirectedGraph.numNodes() << std::endl;
+    std::cout << undirectedGraph.numEdges() << std::endl;
 
     return 0;
 }
