@@ -28,6 +28,14 @@ Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEI
         }
     }
 
+    size_t numNodes() const {
+       return adjacencyList.size(); // La taille de la map est le nombre de nœuds
+    }
+
+    bool isEmpty() const {
+        return adjacencyList.empty();
+    }
+
     void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt) {
         addNode(from);
         addNode(to);
