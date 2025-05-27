@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <optional>
+#include <algorithm>
 
 enum class GraphType {
     DIRECTED,
@@ -74,6 +75,25 @@ Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEI
         return false;
     }
 
+    void removeEdge(const T& from, const T& to) {
+        // remove 'from' -> 'to'
+        if (adjacencyList.count(from)) {
+            std::vector<Neighbor>& neighbors = adjacencyList.at(from);
+            neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
+                            [&](const Neighbor& neighbor) { return neighbor.first == to; }),
+                            neighbors.end());
+        }
+        // if undirected graph, remove  'to' -> 'from' 
+        if (graphType == GraphType::UNDIRECTED && from != to) {
+            if (adjacencyList.count(to)) {
+                std::vector<Neighbor>& neighbors = adjacencyList.at(to);
+                neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
+                                [&](const Neighbor& neighbor) { return neighbor.first == from; }),
+                                neighbors.end());
+            }
+        }
+    }
+
     void printGraph() const {
         for (const auto& pair : adjacencyList) {
             std::cout << "Node " << pair.first << ": ";
@@ -125,6 +145,7 @@ int main()
     undirectedGraph.addEdge("C", "D", 1.0);
     std::cout << "Undirected Graph:\n";
     undirectedGraph.printGraph();
+    undirectedGraph.removeEdge("B", "E");
     std::cout << "Neighbors : " << " E" << std::endl;
     auto tmp = undirectedGraph.getNeighbors("E");
     for (const auto& n : tmp) {
@@ -132,6 +153,6 @@ int main()
     }
     std::cout << undirectedGraph.numNodes() << std::endl;
     std::cout << undirectedGraph.numEdges() << std::endl;
-
+    undirectedGraph.printGraph();
     return 0;
 }
