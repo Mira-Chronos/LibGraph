@@ -98,6 +98,23 @@ public:
 		}
 	}
 
+	void removeNode(const T& node) {
+		// 1. Supprimer toutes les arêtes entrantes vers ce nœud
+		// On doit parcourir tous les autres nœuds pour voir s'ils ont une arête vers 'node'
+		for (auto& pair : adjacencyList) {
+			T currentNode = pair.first;
+			std::vector<Neighbor>& neighbors = pair.second;
+			// Suppression des éléments
+			neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
+			[&](const Neighbor& neighbor) {
+				return neighbor.first == node;
+			}),
+			neighbors.end());
+		}
+		// 2. Supprimer le nœud lui-même de la liste d'adjacence
+		adjacencyList.erase(node);
+	}
+
 	void printGraph() const {
 		for (const auto& pair : adjacencyList) {
 			std::cout << "Node " << pair.first << ": ";
@@ -157,6 +174,9 @@ int main()
 	}
 	std::cout << undirectedGraph.numNodes() << std::endl;
 	std::cout << undirectedGraph.numEdges() << std::endl;
+	undirectedGraph.printGraph();
+	std::cout << "Undirected Graph:\n";
+	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
 	return 0;
 }
