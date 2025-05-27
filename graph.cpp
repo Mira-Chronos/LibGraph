@@ -62,6 +62,18 @@ Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEI
         }
     }
 
+    bool hasEdge(const T& from, const T& to) const {
+        if (adjacencyList.count(from) == 0) {
+            return false;
+        }
+        for (const auto& neighborPair : adjacencyList.at(from)) {
+            if (neighborPair.first == to) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void printGraph() const {
         for (const auto& pair : adjacencyList) {
             std::cout << "Node " << pair.first << ": ";
