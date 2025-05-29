@@ -88,7 +88,9 @@ public:
 	void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt) {
 		addNode(from);
 		addNode(to);
-
+		if (hasEdge(from, to)) {
+			throw std::logic_error("Edge already exists");
+		}
 		if ((weightMode == WeightMode::WEIGHTED && !weight.has_value()) ||
 		        (weightMode == WeightMode::UNWEIGHTED && weight.has_value())) {
 			throw std::invalid_argument("Attempting to add an edge with inconsistent weight mode.");
