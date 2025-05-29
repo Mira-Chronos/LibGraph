@@ -202,6 +202,51 @@ public:
 		return false;
 	}
 
+	class NodeIterator {
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
+		NodeIterator(typename std::unordered_map<T, std::vector<Neighbor>>::const_iterator it)
+			: current_it(it) {}
+
+		const T& operator*() const {
+			return current_it->first; // Retourne la clé (le nœud) de la paire de la map
+		}
+
+		NodeIterator& operator++() {
+			++current_it;
+			return *this;
+		}
+		NodeIterator operator++(int) {
+			NodeIterator temp = *this;
+			++(*this);
+			return temp;
+		}
+
+		bool operator==(const NodeIterator& other) const {
+			return current_it == other.current_it;
+		}
+
+		bool operator!=(const NodeIterator& other) const {
+			return current_it != other.current_it;
+		}
+
+	private:
+		typename std::unordered_map<T, std::vector<Neighbor>>::const_iterator current_it;
+	};
+
+	NodeIterator begin() const {
+		return NodeIterator(adjacencyList.begin());
+	}
+
+	NodeIterator end() const {
+		return NodeIterator(adjacencyList.end());
+	}
+
 private:
 	std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
 	WeightMode weightMode;
@@ -245,48 +290,87 @@ int main()
 	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
 	std::cout << undirectedGraph.hasPath("A","E") << std::endl;
-	
+
 	Graph<int> originalGraph(GraphType::DIRECTED, WeightMode::UNWEIGHTED);
-    originalGraph.addEdge(1, 2);
-    originalGraph.addEdge(2, 3);
-    originalGraph.addNode(4);
+	originalGraph.addEdge(1, 2);
+	originalGraph.addEdge(2, 3);
+	originalGraph.addNode(4);
 
-    std::cout << "Original Graph:\n";
-    originalGraph.printGraph();
+	std::cout << "Original Graph:\n";
+	originalGraph.printGraph();
 
-    // Création d'une copie
-    Graph<int> copiedGraph = originalGraph; // Appel du constructeur de copie
-    // Ou : Graph<int> copiedGraph(originalGraph);
+	// Création d'une copie
+	Graph<int> copiedGraph = originalGraph; // Appel du constructeur de copie
+	// Ou : Graph<int> copiedGraph(originalGraph);
 
-    std::cout << "\nCopied Graph (initial):\n";
-    copiedGraph.printGraph();
+	std::cout << "\nCopied Graph (initial):\n";
+	copiedGraph.printGraph();
 
-    // Modifier le graphe original
-    originalGraph.addEdge(3, 4);
-    originalGraph.removeNode(1);
+	// Modifier le graphe original
+	originalGraph.addEdge(3, 4);
+	originalGraph.removeNode(1);
 
-    std::cout << "\nOriginal Graph (after modifications):\n";
-    originalGraph.printGraph();
+	std::cout << "\nOriginal Graph (after modifications):\n";
+	originalGraph.printGraph();
 
-    std::cout << "\nCopied Graph (should be unchanged):\n";
-    copiedGraph.printGraph(); // Le graphe copié ne devrait pas être affecté
+	std::cout << "\nCopied Graph (should be unchanged):\n";
+	copiedGraph.printGraph(); // Le graphe copié ne devrait pas être affecté
 
-    // Test de l'opérateur d'affectation
-    Graph<int> anotherGraph;
-    anotherGraph.addEdge(10, 11);
-    std::cout << "\nAnother Graph (initial):\n";
-    anotherGraph.printGraph();
+	// Test de l'opérateur d'affectation
+	Graph<int> anotherGraph;
+	anotherGraph.addEdge(10, 11);
+	std::cout << "\nAnother Graph (initial):\n";
+	anotherGraph.printGraph();
 
-    anotherGraph = originalGraph; // Appel de l'opérateur d'affectation par copie
-    std::cout << "\nAnother Graph (after assignment from original):\n";
-    anotherGraph.printGraph();
+	anotherGraph = originalGraph; // Appel de l'opérateur d'affectation par copie
+	std::cout << "\nAnother Graph (after assignment from original):\n";
+	anotherGraph.printGraph();
 
 	std::vector<std::string> allStringNodes = undirectedGraph.getNodes();
 	std::cout << "Noeuds du graphe non dirige: ";
 	for (const std::string& node : allStringNodes) {
-	    std::cout << node << " ";
+		std::cout << node << " ";
 	}
 	std::cout << std::endl;
-	
+
+	Graph<int> myGraph(GraphType::DIRECTED);
+	myGraph.addNode(10);
+	myGraph.addNode(20);
+	myGraph.addNode(30);
+	myGraph.addEdge(10, 20);
+	myGraph.addEdge(20, 30);
+
+	std::cout << "Parcours des noeuds avec un NodeIterator (boucle for-range):\n";
+	for (const int& node : myGraph) { // <-- C'est ça la magie !
+		std::cout << "  Noeud: " << node << std::endl;
+	}
+
+	std::cout << "\nParcours des noeuds avec un NodeIterator (boucle for classique):\n";
+	for (Graph<int>::NodeIterator it = myGraph.begin(); it != myGraph.end(); ++it) {
+		std::cout << "  Noeud: " << *it << std::endl;
+	}
+
+	// Utilisation avec un algorithme de la STL (exemple simple)
+	std::cout << "\nRecherche d'un noeud avec std::find:\n";
+	int nodeToFind = 20;
+	auto it_found = std::find(myGraph.begin(), myGraph.end(), nodeToFind);
+
+	if (it_found != myGraph.end()) {
+		std::cout << "  Noeud " << nodeToFind << " trouvé dans le graphe.\n";
+	}
+	else {
+		std::cout << "  Noeud " << nodeToFind << " non trouvé dans le graphe.\n";
+	}
+
+	// Tester un nœud qui n'existe pas
+	nodeToFind = 40;
+	it_found = std::find(myGraph.begin(), myGraph.end(), nodeToFind);
+	if (it_found != myGraph.end()) {
+		std::cout << "  Noeud " << nodeToFind << " trouvé dans le graphe.\n";
+	}
+	else {
+		std::cout << "  Noeud " << nodeToFind << " non trouvé dans le graphe.\n";
+	}
+
 	return 0;
 }
