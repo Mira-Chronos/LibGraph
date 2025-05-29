@@ -69,6 +69,10 @@ public:
 		return nodes;
 	}
 
+	void clear() {
+		adjacencyList.clear();
+	}
+
 	size_t numEdges() const {
 		size_t edgeCount = 0;
 		for (const auto& pair : adjacencyList) {
