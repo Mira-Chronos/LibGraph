@@ -252,6 +252,25 @@ public:
 		return false;
 	}
 
+	bool checkUndirectedConsistency() const {
+		if (graphType != GraphType::UNDIRECTED) return true;
+		for (const auto& [from, neighbors] : adjacencyList) {
+			for (const auto& [to, _] : neighbors) {
+				auto it = adjacencyList.find(to);
+				if (it == adjacencyList.end()) return false;
+				bool found = false;
+				for (const auto& [back, __] : it->second) {
+					if (back == from) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) return false;
+			}
+		}
+		return true;
+	}
+
 	class NodeIterator {
 	public:
 		using iterator_category = std::forward_iterator_tag;
