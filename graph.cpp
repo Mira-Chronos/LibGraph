@@ -25,6 +25,24 @@ public:
 	Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEIGHTED)
 		: graphType(type), weightMode(wMode) {}
 
+    Graph(const Graph& other)
+        : graphType(other.graphType),
+          weightMode(other.weightMode),
+          adjacencyList(other.adjacencyList)
+    {}
+
+	Graph& operator=(const Graph& other) {
+        if (this != &other) {
+            Graph temp(other);
+            std::swap(graphType, temp.graphType);
+            std::swap(weightMode, temp.weightMode);
+            std::swap(adjacencyList, temp.adjacencyList);
+        }
+        return *this;
+    }
+
+	~Graph() = default;
+
 	void addNode(const T& node) {
 		if (adjacencyList.find(node) == adjacencyList.end()) {
 			adjacencyList[node] = std::vector<Neighbor>();
@@ -215,5 +233,43 @@ int main()
 	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
 	std::cout << undirectedGraph.hasPath("A","E") << std::endl;
+	
+	Graph<int> originalGraph(GraphType::DIRECTED, WeightMode::UNWEIGHTED);
+    originalGraph.addEdge(1, 2);
+    originalGraph.addEdge(2, 3);
+    originalGraph.addNode(4);
+
+    std::cout << "Original Graph:\n";
+    originalGraph.printGraph();
+
+    // Création d'une copie
+    Graph<int> copiedGraph = originalGraph; // Appel du constructeur de copie
+    // Ou : Graph<int> copiedGraph(originalGraph);
+
+    std::cout << "\nCopied Graph (initial):\n";
+    copiedGraph.printGraph();
+
+    // Modifier le graphe original
+    originalGraph.addEdge(3, 4);
+    originalGraph.removeNode(1);
+
+    std::cout << "\nOriginal Graph (after modifications):\n";
+    originalGraph.printGraph();
+
+    std::cout << "\nCopied Graph (should be unchanged):\n";
+    copiedGraph.printGraph(); // Le graphe copié ne devrait pas être affecté
+
+    // Test de l'opérateur d'affectation
+    Graph<int> anotherGraph;
+    anotherGraph.addEdge(10, 11);
+    std::cout << "\nAnother Graph (initial):\n";
+    anotherGraph.printGraph();
+
+    anotherGraph = originalGraph; // Appel de l'opérateur d'affectation par copie
+    std::cout << "\nAnother Graph (after assignment from original):\n";
+    anotherGraph.printGraph();
+
+    return 0;
+	
 	return 0;
 }
