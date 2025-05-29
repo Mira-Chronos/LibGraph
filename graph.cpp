@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <queue>
+#include <sstream>
 
 enum class GraphType {
 	DIRECTED,
@@ -271,6 +272,31 @@ public:
 		return true;
 	}
 
+	std::string toDot(const std::string& graphName = "G") const {
+		std::ostringstream oss;
+		bool directed = graphType == GraphType::DIRECTED;
+
+		oss << (directed ? "digraph " : "graph ") << graphName << " {\n";
+
+		std::unordered_set<std::string> printedEdges;
+
+		for (const auto& [from, neighbors] : adjacencyList) {
+			for (const auto& [to, weight] : neighbors) {
+				// Pour éviter les doublons dans les graphes non orientés
+				if (!directed && from > to) continue;
+
+				oss << "  \"" << from << "\" " << (directed ? "->" : "--") << " \"" << to << "\"";
+
+				if (weightMode == WeightMode::WEIGHTED && weight.has_value()) {
+					oss << " [label=\"" << *weight << "\"]";
+				}
+				oss << ";\n";
+			}
+		}
+		oss << "}\n";
+		return oss.str();
+	}
+
 	class NodeIterator {
 	public:
 		using iterator_category = std::forward_iterator_tag;
@@ -406,6 +432,7 @@ int main()
 	directedGraph.printGraph();
 	std::cout << directedGraph.numNodes() << std::endl;
 	std::cout << directedGraph.numEdges() << std::endl;
+	std::cout << directedGraph.toDot() << std::endl;
 
 	std::cout << "\n";
 
@@ -432,6 +459,8 @@ int main()
 	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
 	std::cout << undirectedGraph.hasPath("A","E") << std::endl;
+
+	std::cout << undirectedGraph.toDot() << std::endl;
 
 	Graph<int> originalGraph(GraphType::DIRECTED, WeightMode::UNWEIGHTED);
 	originalGraph.addEdge(1, 2);
