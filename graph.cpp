@@ -56,6 +56,18 @@ public:
 	bool isEmpty() const {
 		return adjacencyList.empty();
 	}
+	
+	bool containsNode(const T& node) const{
+		return adjacencyList.count(node) > 0;
+	}
+
+    std::vector<T> getNodes() const {
+        std::vector<T> nodes;
+        for (const auto& pair : adjacencyList) {
+            nodes.push_back(pair.first);
+        }
+        return nodes;
+    }	
 
 	size_t numEdges() const {
 		size_t edgeCount = 0;
@@ -269,7 +281,12 @@ int main()
     std::cout << "\nAnother Graph (after assignment from original):\n";
     anotherGraph.printGraph();
 
-    return 0;
+	std::vector<std::string> allStringNodes = undirectedGraph.getNodes();
+	std::cout << "Noeuds du graphe non dirige: ";
+	for (const std::string& node : allStringNodes) {
+	    std::cout << node << " ";
+	}
+	std::cout << std::endl;
 	
 	return 0;
 }
