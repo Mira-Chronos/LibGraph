@@ -134,6 +134,50 @@ public:
 		}
 	}
 
+	std::optional<WeightType> getEdgeWeight(const T& from, const T& to) const {
+		if (adjacencyList.count(from) == 0) {
+			return std::nullopt;
+		}
+
+		for (const auto& neighborPair : adjacencyList.at(from)) {
+			if (neighborPair.first == to) {
+				return neighborPair.second;
+			}
+		}
+		return std::nullopt;
+	}
+
+	bool setEdgeWeight(const T& from, const T& to, std::optional<WeightType> newWeight) {
+		bool updated = false;
+		if (adjacencyList.count(from)) {
+			for (auto& neighborPair : adjacencyList.at(from)) {
+				if (neighborPair.first == to) {
+					if (weightMode == WeightMode::WEIGHTED && !newWeight.has_value()) {
+						throw std::invalid_argument("Attempting to set weight to nullopt in a weighted graph.");
+					}
+					else if (weightMode == WeightMode::UNWEIGHTED && newWeight.has_value()) {
+						throw std::invalid_argument("Attempting to set a weight in an unweighted graph.");
+					}
+					neighborPair.second = newWeight;
+					updated = true;
+					break;
+				}
+			}
+		}
+		if (graphType == GraphType::UNDIRECTED && from != to) {
+			if (adjacencyList.count(to)) {
+				for (auto& neighborPair : adjacencyList.at(to)) {
+					if (neighborPair.first == from) {
+						neighborPair.second = newWeight;
+						updated = true;
+						break;
+					}
+				}
+			}
+		}
+		return updated;
+	}
+
 	void removeNode(const T& node) {
 		// 1. Supprimer toutes les arêtes entrantes vers ce nœud
 		// On doit parcourir tous les autres nœuds pour voir s'ils ont une arête vers 'node'
