@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <optional>
 #include <algorithm>
+#include <unordered_set>
+#include <queue>
 
 enum class GraphType {
 	DIRECTED,
@@ -136,6 +138,40 @@ public:
 		return {};
 	}
 
+	bool hasPath(const T& startNode, const T& endNode) const {
+		// startNode and endNode should exist
+		if (adjacencyList.count(startNode) == 0 || adjacencyList.count(endNode) == 0) {
+			return false;
+		}
+
+		if (startNode == endNode) {
+			return true;
+		}
+
+		std::queue<T> q;
+		std::unordered_set<T> visited;
+
+		q.push(startNode);
+		visited.insert(startNode);
+
+		while (!q.empty()) {
+			T currentNode = q.front();
+			q.pop();
+
+			for (const auto& neighborPair : getNeighbors(currentNode)) {
+				T neighbor = neighborPair.first;
+				if (neighbor == endNode) {
+					return true;
+				}
+				if (visited.find(neighbor) == visited.end()) { // Or !visited.count(neighbor)
+					visited.insert(neighbor);
+					q.push(neighbor);
+				}
+			}
+		}
+		return false;
+	}
+
 private:
 	std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
 	WeightMode weightMode;
@@ -178,5 +214,6 @@ int main()
 	std::cout << "Undirected Graph:\n";
 	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
+	std::cout << undirectedGraph.hasPath("A","E") << std::endl;
 	return 0;
 }
