@@ -184,7 +184,7 @@ public:
 		// 1. Supprimer toutes les arêtes entrantes vers ce nœud
 		// On doit parcourir tous les autres nœuds pour voir s'ils ont une arête vers 'node'
 		for (auto& pair : adjacencyList) {
-			T currentNode = pair.first;
+			//T currentNode = pair.first;
 			std::vector<Neighbor>& neighbors = pair.second;
 			// Suppression des éléments
 			neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
