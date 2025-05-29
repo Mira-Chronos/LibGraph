@@ -316,6 +316,79 @@ public:
 		return NodeIterator(adjacencyList.end());
 	}
 
+	class EdgeIterator {
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = Neighbor;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const Neighbor*;
+		using reference = const Neighbor&;
+
+		EdgeIterator(typename std::vector<Neighbor>::const_iterator it)
+			: current(it) {}
+
+		reference operator*() const {
+			return *current;
+		}
+		pointer operator->() const {
+			return &(*current);
+		}
+
+		EdgeIterator& operator++() {
+			++current;
+			return *this;
+		}
+		EdgeIterator operator++(int) {
+			EdgeIterator tmp = *this;
+			++(*this);
+			return tmp;
+		}
+
+		bool operator==(const EdgeIterator& other) const {
+			return current == other.current;
+		}
+		bool operator!=(const EdgeIterator& other) const {
+			return current != other.current;
+		}
+
+	private:
+		typename std::vector<Neighbor>::const_iterator current;
+	};
+
+	EdgeIterator edgeBegin(const T& node) const {
+		auto it = adjacencyList.find(node);
+		if (it != adjacencyList.end()) {
+			return EdgeIterator(it->second.begin());
+		}
+		return edgeEnd(node);
+	}
+
+	EdgeIterator edgeEnd(const T& node) const {
+		auto it = adjacencyList.find(node);
+		if (it != adjacencyList.end()) {
+			return EdgeIterator(it->second.end());
+		}
+		return EdgeIterator({}); // empty iterator
+	}
+
+	class EdgeRange {
+	public:
+		EdgeRange(EdgeIterator begin, EdgeIterator end)
+			: b(begin), e(end) {}
+		EdgeIterator begin() const {
+			return b;
+		}
+		EdgeIterator end() const {
+			return e;
+		}
+	private:
+		EdgeIterator b, e;
+	};
+
+	EdgeRange edges(const T& node) const {
+		return EdgeRange(edgeBegin(node), edgeEnd(node));
+	}
+
 private:
 	std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
 	GraphType graphType;
@@ -439,6 +512,22 @@ int main()
 	}
 	else {
 		std::cout << "  Noeud " << nodeToFind << " non trouvé dans le graphe.\n";
+	}
+
+	Graph<std::string> g(GraphType::DIRECTED, WeightMode::WEIGHTED);
+	g.addEdge("A", "B", 3.0);
+	g.addEdge("A", "C", 5.0);
+	g.addEdge("A", "D", 2.0);
+
+	for (auto it = g.edgeBegin("A"); it != g.edgeEnd("A"); ++it) {
+		auto [to, weight] = *it;
+		std::cout << "A -> " << to;
+		if (weight) std::cout << " (" << *weight << ")";
+		std::cout << '\n';
+	}
+
+	for (const auto& [to, weight] : g.edges("A")) {
+		std::cout << "A -> " << to << '\n';
 	}
 
 	return 0;
