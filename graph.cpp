@@ -88,8 +88,8 @@ public:
 	void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt) {
 		addNode(from);
 		addNode(to);
-		if (hasEdge(from, to)) {
-			throw std::logic_error("Edge already exists");
+		if (hasEdge(from, to) || (graphType == GraphType::UNDIRECTED && hasEdge(to, from))) {
+			throw std::logic_error("Edge already exists (directly or symmetrically)");
 		}
 		if ((weightMode == WeightMode::WEIGHTED && !weight.has_value()) ||
 		        (weightMode == WeightMode::UNWEIGHTED && weight.has_value())) {
