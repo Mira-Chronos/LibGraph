@@ -26,9 +26,9 @@ public:
 		: graphType(type), weightMode(wMode) {}
 
 	Graph(const Graph& other)
-		: graphType(other.graphType),
-		  weightMode(other.weightMode),
-		  adjacencyList(other.adjacencyList)
+		: adjacencyList(other.adjacencyList),
+		  graphType(other.graphType),
+		  weightMode(other.weightMode)
 	{}
 
 	Graph& operator=(const Graph& other) {
@@ -299,8 +299,8 @@ public:
 
 private:
 	std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
-	WeightMode weightMode;
 	GraphType graphType;
+	WeightMode weightMode;
 };
 
 int main()
