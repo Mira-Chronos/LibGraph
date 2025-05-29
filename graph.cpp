@@ -257,8 +257,8 @@ public:
 		using iterator_category = std::forward_iterator_tag;
 		using value_type = T;
 		using difference_type = std::ptrdiff_t;
-		using pointer = T*;
-		using reference = T&;
+		using pointer = const T*;
+		using reference = const T&;
 
 		NodeIterator(typename std::unordered_map<T, std::vector<Neighbor>>::const_iterator it)
 			: current_it(it) {}
