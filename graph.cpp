@@ -25,21 +25,21 @@ public:
 	Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEIGHTED)
 		: graphType(type), weightMode(wMode) {}
 
-    Graph(const Graph& other)
-        : graphType(other.graphType),
-          weightMode(other.weightMode),
-          adjacencyList(other.adjacencyList)
-    {}
+	Graph(const Graph& other)
+		: graphType(other.graphType),
+		  weightMode(other.weightMode),
+		  adjacencyList(other.adjacencyList)
+	{}
 
 	Graph& operator=(const Graph& other) {
-        if (this != &other) {
-            Graph temp(other);
-            std::swap(graphType, temp.graphType);
-            std::swap(weightMode, temp.weightMode);
-            std::swap(adjacencyList, temp.adjacencyList);
-        }
-        return *this;
-    }
+		if (this != &other) {
+			Graph temp(other);
+			std::swap(graphType, temp.graphType);
+			std::swap(weightMode, temp.weightMode);
+			std::swap(adjacencyList, temp.adjacencyList);
+		}
+		return *this;
+	}
 
 	~Graph() = default;
 
@@ -50,24 +50,24 @@ public:
 	}
 
 	size_t numNodes() const {
-		return adjacencyList.size(); // La taille de la map est le nombre de nœuds
+		return adjacencyList.size();
 	}
 
 	bool isEmpty() const {
 		return adjacencyList.empty();
 	}
-	
-	bool containsNode(const T& node) const{
+
+	bool containsNode(const T& node) const {
 		return adjacencyList.count(node) > 0;
 	}
 
-    std::vector<T> getNodes() const {
-        std::vector<T> nodes;
-        for (const auto& pair : adjacencyList) {
-            nodes.push_back(pair.first);
-        }
-        return nodes;
-    }	
+	std::vector<T> getNodes() const {
+		std::vector<T> nodes;
+		for (const auto& pair : adjacencyList) {
+			nodes.push_back(pair.first);
+		}
+		return nodes;
+	}
 
 	size_t numEdges() const {
 		size_t edgeCount = 0;
