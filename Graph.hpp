@@ -23,83 +23,83 @@ enum class WeightMode {
 template <typename T, typename WeightType = double>
 class Graph {
 public:
-    using Neighbor = std::pair<T, std::optional<WeightType>>;
+	using Neighbor = std::pair<T, std::optional<WeightType>>;
 
-    Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEIGHTED);
-    Graph(const Graph& other);
-    Graph& operator=(const Graph& other);
-    ~Graph();
+	Graph(GraphType type = GraphType::DIRECTED, WeightMode wMode = WeightMode::UNWEIGHTED);
+	Graph(const Graph& other);
+	Graph& operator=(const Graph& other);
+	~Graph();
 
 	// === Nodes ===
-    void addNode(const T& node);
-    void removeNode(const T& node);
-    std::vector<T> getNodes() const;
-    size_t numNodes() const;
+	void addNode(const T& node);
+	void removeNode(const T& node);
+	std::vector<T> getNodes() const;
+	size_t numNodes() const;
 	bool containsNode(const T& node) const;
 
 	// === Edges ===
-    void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt);
-    void removeEdge(const T& from, const T& to);
-    bool hasEdge(const T& from, const T& to) const;
-    std::optional<WeightType> getEdgeWeight(const T& from, const T& to) const;
+	void addEdge(const T& from, const T& to, std::optional<WeightType> weight = std::nullopt);
+	void removeEdge(const T& from, const T& to);
+	bool hasEdge(const T& from, const T& to) const;
+	std::optional<WeightType> getEdgeWeight(const T& from, const T& to) const;
 	bool setEdgeWeight(const T& from, const T& to, std::optional<WeightType> newWeight);
-    size_t numEdges() const;
+	size_t numEdges() const;
 
 	// === Utility ===
-    bool isEmpty() const;
-    bool hasPath(const T& startNode, const T& endNode) const;
-    std::vector<Neighbor> getNeighbors(const T& node) const;
-    bool checkUndirectedConsistency() const;
-    void clear();
+	bool isEmpty() const;
+	bool hasPath(const T& startNode, const T& endNode) const;
+	std::vector<Neighbor> getNeighbors(const T& node) const;
+	bool checkUndirectedConsistency() const;
+	void clear();
 
 	std::vector<T> shortestPath(const T& start, const T& end) const;
 
 	// === Export ===
 	void printGraph() const;
-    std::string toDot(const std::string& graphName = "G") const;
+	std::string toDot(const std::string& graphName = "G") const;
 
 	// === Iterators ===
-    class NodeIterator;
-    NodeIterator begin() const;
-    NodeIterator end() const;
+	class NodeIterator;
+	NodeIterator begin() const;
+	NodeIterator end() const;
 
-    class EdgeIterator;
-    EdgeIterator edgeBegin(const T& node) const;
-    EdgeIterator edgeEnd(const T& node) const;
+	class EdgeIterator;
+	EdgeIterator edgeBegin(const T& node) const;
+	EdgeIterator edgeEnd(const T& node) const;
 
-    class EdgeRange;
-    EdgeRange edges(const T& node) const;
+	class EdgeRange;
+	EdgeRange edges(const T& node) const;
 
 private:
-    std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
-    GraphType graphType;
-    WeightMode weightMode;
+	std::unordered_map<T, std::vector<Neighbor>> adjacencyList;
+	GraphType graphType;
+	WeightMode weightMode;
 };
 
 // constructors
 
 template <typename T, typename WeightType>
 Graph<T, WeightType>::Graph(GraphType type, WeightMode wMode)
-    : graphType(type), weightMode(wMode)
+	: graphType(type), weightMode(wMode)
 {}
 
 template <typename T, typename WeightType>
 Graph<T, WeightType>::Graph(const Graph& other)
-    : adjacencyList(other.adjacencyList),
-      graphType(other.graphType),
-      weightMode(other.weightMode)
+	: adjacencyList(other.adjacencyList),
+	  graphType(other.graphType),
+	  weightMode(other.weightMode)
 {}
 
 template <typename T, typename WeightType>
 Graph<T, WeightType>& Graph<T, WeightType>::operator=(const Graph& other)
 {
-    if (this != &other) {
-        Graph temp(other);
-        std::swap(graphType, temp.graphType);
-        std::swap(weightMode, temp.weightMode);
-        std::swap(adjacencyList, temp.adjacencyList);
-    }
-    return *this;
+	if (this != &other) {
+		Graph temp(other);
+		std::swap(graphType, temp.graphType);
+		std::swap(weightMode, temp.weightMode);
+		std::swap(adjacencyList, temp.adjacencyList);
+	}
+	return *this;
 }
 
 template <typename T, typename WeightType>
@@ -108,12 +108,14 @@ Graph<T, WeightType>::~Graph() = default;
 // methods
 
 template <typename T, typename WeightType>
-bool Graph<T, WeightType>::isEmpty() const {
+bool Graph<T, WeightType>::isEmpty() const
+{
 	return adjacencyList.empty();
 }
 
 template <typename T, typename WeightType>
-void Graph<T, WeightType>::clear() {
+void Graph<T, WeightType>::clear()
+{
 	adjacencyList.clear();
 }
 
@@ -162,25 +164,25 @@ bool Graph<T, WeightType>::hasPath(const T& startNode, const T& endNode) const
 }
 
 template <typename T, typename WeightType>
-	bool Graph<T, WeightType>::checkUndirectedConsistency() const
-	{
-		if (graphType != GraphType::UNDIRECTED) return true;
-		for (const auto& [from, neighbors] : adjacencyList) {
-			for (const auto& [to, _] : neighbors) {
-				auto it = adjacencyList.find(to);
-				if (it == adjacencyList.end()) return false;
-				bool found = false;
-				for (const auto& [back, __] : it->second) {
-					if (back == from) {
-						found = true;
-						break;
-					}
+bool Graph<T, WeightType>::checkUndirectedConsistency() const
+{
+	if (graphType != GraphType::UNDIRECTED) return true;
+	for (const auto& [from, neighbors] : adjacencyList) {
+		for (const auto& [to, _] : neighbors) {
+			auto it = adjacencyList.find(to);
+			if (it == adjacencyList.end()) return false;
+			bool found = false;
+			for (const auto& [back, __] : it->second) {
+				if (back == from) {
+					found = true;
+					break;
 				}
-				if (!found) return false;
 			}
+			if (!found) return false;
 		}
-		return true;
 	}
+	return true;
+}
 
 template <typename T, typename WeightType>
 std::string Graph<T, WeightType>::toDot(const std::string& graphName) const
@@ -323,12 +325,14 @@ void Graph<T, WeightType>::removeNode(const T& node)
 }
 
 template <typename T, typename WeightType>
-size_t Graph<T, WeightType>::numNodes() const {
+size_t Graph<T, WeightType>::numNodes() const
+{
 	return adjacencyList.size();
 }
 
 template <typename T, typename WeightType>
-bool Graph<T, WeightType>::containsNode(const T& node) const {
+bool Graph<T, WeightType>::containsNode(const T& node) const
+{
 	return adjacencyList.count(node) > 0;
 }
 
@@ -509,46 +513,47 @@ class Graph<T, WeightType>::NodeIterator Graph<T, WeightType>::end() const {
 
 template <typename T, typename WeightType>
 class Graph<T, WeightType>::EdgeIterator {
-	public:
-		using iterator_category = std::forward_iterator_tag;
-		using value_type = Neighbor;
-		using difference_type = std::ptrdiff_t;
-		using pointer = const Neighbor*;
-		using reference = const Neighbor&;
+public:
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = Neighbor;
+	using difference_type = std::ptrdiff_t;
+	using pointer = const Neighbor*;
+	using reference = const Neighbor&;
 
-		EdgeIterator(typename std::vector<Neighbor>::const_iterator it)
-			: current(it) {}
+	EdgeIterator(typename std::vector<Neighbor>::const_iterator it)
+		: current(it) {}
 
-		reference operator*() const {
-			return *current;
-		}
-		pointer operator->() const {
-			return &(*current);
-		}
+	reference operator*() const {
+		return *current;
+	}
+	pointer operator->() const {
+		return &(*current);
+	}
 
-		EdgeIterator& operator++() {
-			++current;
-			return *this;
-		}
-		EdgeIterator operator++(int) {
-			EdgeIterator tmp = *this;
-			++(*this);
-			return tmp;
-		}
+	EdgeIterator& operator++() {
+		++current;
+		return *this;
+	}
+	EdgeIterator operator++(int) {
+		EdgeIterator tmp = *this;
+		++(*this);
+		return tmp;
+	}
 
-		bool operator==(const EdgeIterator& other) const {
-			return current == other.current;
-		}
-		bool operator!=(const EdgeIterator& other) const {
-			return current != other.current;
-		}
+	bool operator==(const EdgeIterator& other) const {
+		return current == other.current;
+	}
+	bool operator!=(const EdgeIterator& other) const {
+		return current != other.current;
+	}
 
-	private:
-		typename std::vector<Neighbor>::const_iterator current;
-	};
+private:
+	typename std::vector<Neighbor>::const_iterator current;
+};
 
 template <typename T, typename WeightType>
-typename Graph<T, WeightType>::EdgeIterator Graph<T, WeightType>::edgeBegin(const T& node) const {
+typename Graph<T, WeightType>::EdgeIterator Graph<T, WeightType>::edgeBegin(const T& node) const
+{
 	auto it = adjacencyList.find(node);
 	if (it != adjacencyList.end()) {
 		return EdgeIterator(it->second.begin());
@@ -557,7 +562,8 @@ typename Graph<T, WeightType>::EdgeIterator Graph<T, WeightType>::edgeBegin(cons
 }
 
 template <typename T, typename WeightType>
-typename Graph<T, WeightType>::EdgeIterator Graph<T, WeightType>::edgeEnd(const T& node) const {
+typename Graph<T, WeightType>::EdgeIterator Graph<T, WeightType>::edgeEnd(const T& node) const
+{
 	auto it = adjacencyList.find(node);
 	if (it != adjacencyList.end()) {
 		return EdgeIterator(it->second.end());
@@ -583,6 +589,7 @@ private:
 };
 
 template <typename T, typename WeightType>
-typename Graph<T, WeightType>::EdgeRange Graph<T, WeightType>::edges(const T& node) const {
+typename Graph<T, WeightType>::EdgeRange Graph<T, WeightType>::edges(const T& node) const
+{
 	return EdgeRange(edgeBegin(node), edgeEnd(node));
 }
