@@ -49,7 +49,11 @@ int main()
 	undirectedGraph.printGraph();
 
 	std::cout << "has Path between A and E ? " << undirectedGraph.hasPath("A","E") << std::endl;
-
+	std::cout << "Path from A to E :\n";
+	std::vector<std::string> tmp1 = undirectedGraph.shortestPath("A","E");
+	for (const auto& t : tmp1) {
+		std::cout << "\t" << t << std::endl;
+	}
 
 	// test copy
 	Graph<int> originalGraph(GraphType::DIRECTED, WeightMode::UNWEIGHTED);

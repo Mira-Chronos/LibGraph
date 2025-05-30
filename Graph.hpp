@@ -7,6 +7,7 @@
 #include <iostream>
 #include <queue>
 #include <unordered_set>
+#include <limits>
 
 enum class GraphType {
 	DIRECTED,
@@ -50,6 +51,8 @@ public:
     std::vector<Neighbor> getNeighbors(const T& node) const;
     bool checkUndirectedConsistency() const;
     void clear();
+
+	std::vector<T> shortestPath(const T& start, const T& end) const;
 
 	// === Export ===
 	void printGraph() const;
@@ -220,6 +223,64 @@ void Graph<T, WeightType>::printGraph() const
 		}
 		std::cout << std::endl;
 	}
+}
+
+
+template <typename T, typename WeightType>
+std::vector<T> Graph<T, WeightType>::shortestPath(const T& start, const T& end) const
+{
+	if (!containsNode(start) || !containsNode(end)) {
+		return {};  // No path if start or end not present
+	}
+
+	std::unordered_map<T, WeightType> distances;
+	std::unordered_map<T, T> predecessors;
+	std::unordered_set<T> visited;
+
+	auto compare = [&](const T& lhs, const T& rhs) {
+		return distances[lhs] > distances[rhs];
+	};
+
+	std::priority_queue<T, std::vector<T>, decltype(compare)> queue(compare);
+
+	for (const auto& [node, _] : adjacencyList) {
+		distances[node] = std::numeric_limits<WeightType>::max();
+	}
+
+	distances[start] = 0;
+	queue.push(start);
+
+	while (!queue.empty()) {
+		T current = queue.top();
+		queue.pop();
+
+		if (visited.count(current)) continue;
+		visited.insert(current);
+
+		for (const auto& [neighbor, weightOpt] : adjacencyList.at(current)) {
+			WeightType edgeWeight = weightOpt.value_or(1);
+			WeightType newDist = distances[current] + edgeWeight;
+
+			if (newDist < distances[neighbor]) {
+				distances[neighbor] = newDist;
+				predecessors[neighbor] = current;
+				queue.push(neighbor);
+			}
+		}
+	}
+
+	if (!predecessors.count(end)) {
+		return {};  // No path found
+	}
+
+	// Reconstruct path
+	std::vector<T> path;
+	for (T at = end; at != start; at = predecessors[at]) {
+		path.push_back(at);
+	}
+	path.push_back(start);
+	std::reverse(path.begin(), path.end());
+	return path;
 }
 
 // Nodes
