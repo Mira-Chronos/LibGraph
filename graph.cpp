@@ -18,9 +18,9 @@ int main()
 	directedGraph.addEdge(3, 1);
 	std::cout << "Directed Graph:\n";
 	directedGraph.printGraph();
-	std::cout << directedGraph.numNodes() << std::endl;
-	std::cout << directedGraph.numEdges() << std::endl;
-	std::cout << directedGraph.toDot() << std::endl;
+	std::cout << "Number of Nodes : " << directedGraph.numNodes() << std::endl;
+	std::cout << "Number of Edges : " << directedGraph.numEdges() << std::endl;
+	std::cout << "Export to dot:\n" << directedGraph.toDot() << std::endl << "---------------" << std::endl;
 
 	std::cout << "\n";
 
@@ -34,33 +34,34 @@ int main()
 	undirectedGraph.addEdge("C", "D", 1.0);
 	std::cout << "Undirected Graph:\n";
 	undirectedGraph.printGraph();
+
+	std::cout << "Number of Nodes : " << undirectedGraph.numNodes() << std::endl;
+	std::cout << "Number of Edges : " << undirectedGraph.numEdges() << std::endl;
+	std::cout << "Export to dot:\n" << undirectedGraph.toDot() << std::endl << "---------------" << std::endl;
 	undirectedGraph.removeEdge("B", "G");
-	std::cout << "Neighbors : " << " E" << std::endl;
+	std::cout << "Neighbors  of E E" << std::endl;
 	auto tmp = undirectedGraph.getNeighbors("E");
 	for (const auto& n : tmp) {
 		std::cout << "\t"<< n.first << std::endl;
 	}
-	std::cout << undirectedGraph.numNodes() << std::endl;
-	std::cout << undirectedGraph.numEdges() << std::endl;
-	undirectedGraph.printGraph();
-	std::cout << "Undirected Graph:\n";
+	std::cout << "remove Node D:\n";
 	undirectedGraph.removeNode("D");
 	undirectedGraph.printGraph();
-	std::cout << undirectedGraph.hasPath("A","E") << std::endl;
 
-	std::cout << undirectedGraph.toDot() << std::endl;
+	std::cout << "has Path between A and E ? " << undirectedGraph.hasPath("A","E") << std::endl;
 
+
+	// test copy
 	Graph<int> originalGraph(GraphType::DIRECTED, WeightMode::UNWEIGHTED);
 	originalGraph.addEdge(1, 2);
 	originalGraph.addEdge(2, 3);
 	originalGraph.addNode(4);
 
 	std::cout << "Original Graph:\n";
-	originalGraph.printGraph();
 
+	originalGraph.printGraph();
 	// Création d'une copie
-	Graph<int> copiedGraph = originalGraph; // Appel du constructeur de copie
-	// Ou : Graph<int> copiedGraph(originalGraph);
+	Graph<int> copiedGraph = originalGraph; // or : Graph<int> copiedGraph(originalGraph);
 
 	std::cout << "\nCopied Graph (initial):\n";
 	copiedGraph.printGraph();
@@ -92,6 +93,7 @@ int main()
 	}
 	std::cout << std::endl;
 
+	// Iterators
 	Graph<int> myGraph(GraphType::DIRECTED);
 	myGraph.addNode(10);
 	myGraph.addNode(20);
